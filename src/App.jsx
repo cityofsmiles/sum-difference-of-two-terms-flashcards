@@ -16,18 +16,26 @@ export default function App() {
 
   // Load flashcards JSON
   const loadFlashcards = () => {
-    const base = "/flashcards.json"; // works for dev + GitHub Pages
-    fetch(base)
-      .then((res) => res.json())
-      .then((data) => {
-        const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 10);
-        setFlashcards(shuffled);
-        setCurrentIndex(0);
-        setAnswers({});
-        setShowResults(false);
-        setLoading(false);
-      });
-  };
+  const base =
+    import.meta.env.MODE === "development"
+      ? "/flashcards.json"
+      : "https://cityofsmiles.github.io/sum-difference-of-two-terms-flashcards/flashcards.json";
+
+  fetch(base)
+    .then((res) => res.json())
+    .then((data) => {
+      const shuffled = data.sort(() => 0.5 - Math.random()).slice(0, 10);
+      setFlashcards(shuffled);
+      setCurrentIndex(0);
+      setAnswers({});
+      setShowResults(false);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error("Failed to load flashcards:", err);
+      setLoading(false);
+    });
+};
 
   useEffect(() => {
     loadFlashcards();
